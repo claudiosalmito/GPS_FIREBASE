@@ -7,16 +7,65 @@
 //
 
 import UIKit
+import CoreLocation
+import Firebase
 
-class InicioViewController: UIViewController {
 
+class InicioViewController: UIViewController, CLLocationManagerDelegate {
+
+    let locationManager = CLLocationManager()
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.startUpdatingLocation()
+        
 
-        // Do any additional setup after loading the view.
     }
     
-
+   
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        
+        let location = locations[locations.count - 1]
+        
+        //let coordenada = "LAT:\(location.coordinate.latitude) LON:\(location.coordinate.longitude)"
+        
+        let coordenada = ["Latitude" : "\(location.coordinate.latitude)", "Longitude" : location.coordinate.longitude, "Altitude" : location.altitude] as [String : Any]
+        
+        
+        
+        
+        
+        
+        
+        //print (coordenada)
+        
+        let locationsDB = Database.database().reference().child("locations")
+        locationsDB.childByAutoId().setValue(coordenada) {
+            
+            (error, reference) in
+            
+            if error != nil {
+                print (error)
+            } else {
+                print("Registro gravado com sucesso!")
+            }
+            
+        }
+        
+        
+        
+    }
+    
+    
+    
+    
     /*
     // MARK: - Navigation
 
